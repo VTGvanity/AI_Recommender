@@ -13,28 +13,27 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            # Create the product object but don't save to DB yet
             product = form.save(commit=False)
             
-            # Initialize OpenAI client using your environment variable
-            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+            # 1. Get the key safely
+            api_key = os.getenv("OPENAI_API_KEY")
             
+            # 2. Add a 'Safety Net' so it doesn't crash if the AI fails
             try:
-                # Ask AI to generate 3 relevant tags
+                client = OpenAI(api_key=api_key)
                 response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": "You are a helpful e-commerce assistant."},
-                        {"role": "user", "content": f"Suggest 3 short tags for a product named '{product.name}' in the category '{product.category}'. Return only the tags separated by commas."}
+                        {"role": "user", "content": f"Suggest 3 short tags for {product.name}. Only tags, comma separated."}
                     ]
                 )
-                # Store the AI's response in the tags field
                 product.tags = response.choices[0].message.content
             except Exception as e:
-                print(f"AI Tagging failed: {e}")
+                # If AI fails, just set a default tag instead of crashing the site
+                print(f"AI Error: {e}")
                 product.tags = "General"
 
-            product.save() # Save to MongoDB Atlas [cite: 1091]
+            product.save()
             return redirect('product_list')
     else:
         form = ProductForm()
