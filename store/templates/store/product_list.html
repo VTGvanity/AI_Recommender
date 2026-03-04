@@ -7,14 +7,14 @@
     <h1>Product List</h1>
     <ul>
         {% for product in products %}
-            <li>{{ product.name }} ₱{{ product.price }}</li>
+            <li>{{ product.name }} - ₱{{ product.price }} <br><small>Tags: {{ product.tags }}</small></li>
         {% endfor %}
     </ul>
 
     <h2>All Products</h2>
     <ul>
         {% for product in products %}
-            <li>{{ product.name }} ₱{{ product.price }}</li>
+            <li>{{ product.name }} - ₱{{ product.price }} <br><small>Tags: {{ product.tags }}</small></li>
         {% endfor %}
     </ul>
 
@@ -23,7 +23,7 @@
     <h2>Recommended Products</h2>
     <ul>
         {% for product in recommendations %}
-            <li>{{ product.name }} ₱{{ product.price }}</li>
+            <li>{{ product.name }} - ₱{{ product.price }}</li>
         {% endfor %}
     </ul>
 </body>
